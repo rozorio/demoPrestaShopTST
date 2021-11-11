@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.NoSuchElementException;
 
 import org.openqa.selenium.By;
+//import org.openqa.selenium.By.ByCssSelector;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -17,6 +18,7 @@ public class ModalProduto {
 	private By precoProd = new By.ByCssSelector("#blockcart-modal .modal-body .col-md-6:nth-child(2) .product-price");
 	private By outrasInfos = new By.ByCssSelector("#blockcart-modal .modal-body .col-md-6:nth-child(2) strong");
 	private By subTotal = new By.ByCssSelector(".cart-content p:nth-child(2) span.value");
+	private By btnChckOut = new By.ByCssSelector(".cart-content-btn a");
 	
 	public ModalProduto(WebDriver driver) {
 		this.driver = driver;
@@ -61,5 +63,10 @@ public class ModalProduto {
 	
 	public String obterSubTotal() {
 		return driver.findElement(subTotal).getText();
+	}
+	
+	public CarrinhoPage fazerChckOutPedido() {
+		driver.findElement(btnChckOut).click();
+		return new CarrinhoPage(driver);
 	}
 }

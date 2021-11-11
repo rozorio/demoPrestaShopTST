@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import base.BaseTests;
+import pages.CarrinhoPage;
 import pages.LoginPage;
 import pages.ModalProduto;
 import pages.ProdutoPage;
@@ -78,7 +79,7 @@ public class HomePageTests extends BaseTests {
 	}
 	
 
-	 
+	ModalProduto modalProduto; 
 	@Test
 	public void incluirProdCarrinho_carrinhoSucesso() {
 		/* Procedimento:
@@ -114,7 +115,7 @@ public class HomePageTests extends BaseTests {
 		produtoPage.alterarQuantidade(selQtd);
 		
 		//ADICIONAR AO CARRINHO
-		ModalProduto modalProduto = produtoPage.adicionarCarrinho();
+		modalProduto = produtoPage.adicionarCarrinho();
 		
 		//VALIDAÇÕES CARRINHO
 		assertTrue(modalProduto.validarMsgSucesso().endsWith("Product successfully added to your shopping cart"));
@@ -133,6 +134,22 @@ public class HomePageTests extends BaseTests {
 		Double subTotDouble = Double.parseDouble(subTotModal);
 		
 		assertThat(precoProdDouble * selQtd, is(subTotDouble));
+	}
+	
+	@Test
+	public void testValidarCarrinho_infosPersists() {
+		
+		//SELECIONAR PRODUTO E FAZER CHECKOUT
+		incluirProdCarrinho_carrinhoSucesso();
+		CarrinhoPage carrinhoPage = modalProduto.fazerChckOutPedido();
+		
+		//VALIDAR INFOS PROD
+		System.out.println(carrinhoPage.obterNomeProd());
+		System.out.println(carrinhoPage.obterPrecoProd());
+		System.out.println(carrinhoPage.obterTamProd());
+		System.out.println(carrinhoPage.obterCorProd());
+		System.out.println(carrinhoPage.obterQtdeProd());
+		System.out.println(carrinhoPage.obterSubTotProd());
 	}
 
 }
