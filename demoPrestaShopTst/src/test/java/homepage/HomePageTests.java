@@ -14,6 +14,7 @@ import pages.CarrinhoPage;
 import pages.LoginPage;
 import pages.ModalProduto;
 import pages.ProdutoPage;
+import util.Funcoes;
 
 /* 
  * Classe HomePageTests: reúne os testes realizados na home page
@@ -79,9 +80,13 @@ public class HomePageTests extends BaseTests {
 	}
 	
 
-	ModalProduto modalProduto; 
+	ModalProduto modalProduto;
+	String selTam = "M";
+	String selCor = "Black";
+	Integer selQtd = 2;
+	String subTotModal;
 	@Test
-	public void incluirProdCarrinho_carrinhoSucesso() {
+	public void testIncluirProdCarrinho_carrinhoSucesso() {
 		/* Procedimento:
 		 * - Validar log on;
 		 * - Selecionar produto;
@@ -90,9 +95,7 @@ public class HomePageTests extends BaseTests {
 		 * - Validar carrinho.
 		 */
 		
-		String selTam = "M";
-		String selCor = "Black";
-		Integer selQtd = 2;
+		
 		
 		LoginPage logPg = homePage.clicarSignIn();
 		
@@ -129,7 +132,7 @@ public class HomePageTests extends BaseTests {
 		precoProdModal = precoProdModal.replace("$", "");
 		Double precoProdDouble = Double.parseDouble(precoProdModal);
 		
-		String subTotModal = modalProduto.obterSubTotal();
+		subTotModal = modalProduto.obterSubTotal();
 		subTotModal = subTotModal.replace("$", "");
 		Double subTotDouble = Double.parseDouble(subTotModal);
 		
@@ -139,17 +142,44 @@ public class HomePageTests extends BaseTests {
 	@Test
 	public void testValidarCarrinho_infosPersists() {
 		
+		Double precoProd;
+		Double subTotProd;
+		Integer qtdeProd;
+		
 		//SELECIONAR PRODUTO E FAZER CHECKOUT
-		incluirProdCarrinho_carrinhoSucesso();
+		testIncluirProdCarrinho_carrinhoSucesso();
 		CarrinhoPage carrinhoPage = modalProduto.fazerChckOutPedido();
 		
 		//VALIDAR INFOS PROD
-		System.out.println(carrinhoPage.obterNomeProd());
-		System.out.println(carrinhoPage.obterPrecoProd());
-		System.out.println(carrinhoPage.obterTamProd());
-		System.out.println(carrinhoPage.obterCorProd());
-		System.out.println(carrinhoPage.obterQtdeProd());
-		System.out.println(carrinhoPage.obterSubTotProd());
+		assertThat(carrinhoPage.obterNomeProd().toUpperCase(), is(nomeProd_PP.toUpperCase()));
+		assertThat(carrinhoPage.obterPrecoProd(), is(precoProd_PP));
+		precoProd = Funcoes.tratarPrecoToDouble(carrinhoPage.obterPrecoProd());
+		assertThat(carrinhoPage.obterTamProd(), is(selTam));
+		assertThat(carrinhoPage.obterCorProd(), is(selCor));
+		qtdeProd = carrinhoPage.obterQtdeProd();
+		assertThat(qtdeProd, is(selQtd));
+		subTotProd = Funcoes.tratarPrecoToDouble(carrinhoPage.obterSubTotProd());
+		assertThat(subTotProd, is(qtdeProd*precoProd));
+		
+		//VALIDAR INFOS PAINEL TOTAL
+		String qtdeTP = carrinhoPage.obterQtdeTP();
+		qtdeTP = qtdeTP.replace(" items", "");
+		Integer qtdeTPInt = Integer.parseInt(qtdeTP);
+		Double subTotTPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterSubTotTP());
+		String shipTPStr = "$7.00";
+		Double taxesTP = 0.0;
+		Double shipTPDbl;
+		assertThat(qtdeTPInt, is(qtdeProd));
+		assertThat(subTotTPDbl, is(subTotProd));
+		assertThat(carrinhoPage.obterShipTP(), is(shipTPStr));
+		shipTPDbl = Funcoes.tratarPrecoToDouble(shipTPStr);
+		Double totTaxETPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterTotTaxETP());
+		assertThat(totTaxETPDbl, is(subTotTPDbl + shipTPDbl));
+		Double taxTPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obtertaxesTP());
+		Double totTaxITPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterTotTaxITP());
+		assertThat(totTaxITPDbl, is(totTaxETPDbl + taxTPDbl));
+		assertThat(taxTPDbl, is(taxesTP));
+		
 	}
 
 }
