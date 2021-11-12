@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 //import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 
 import base.BaseTests;
 import pages.CarrinhoPage;
@@ -26,38 +28,39 @@ public class HomePageTests extends BaseTests {
 
 	/*
 	 * 
-	 * public void testContProds...: Método que irá carregar pág inicial e validar correta exibição da lista de produtos
-	 * ** carregarPagInic(): Método da classe BaseTests
-	 * ** assertThat...: comparação do Hamcrest, compara se valor retornado pelo homepage.contProds() é 8
+	 * public void testContProds...: Método que irá carregar pág inicial e validar
+	 * correta exibição da lista de produtos ** carregarPagInic(): Método da classe
+	 * BaseTests ** assertThat...: comparação do Hamcrest, compara se valor
+	 * retornado pelo homepage.contProds() é 8
 	 */
-	
-	@Test     //anotação JUnit, indica que são métodos de teste.
+
+	@Test // anotação JUnit, indica que são métodos de teste.
 	public void testContProds_oitoProds() {
-		carregarPagInic();      
-		assertThat(homePage.contProds(),is(8)); 
+		carregarPagInic();
+		assertThat(homePage.contProds(), is(8));
 	}
-	
+
 	@Test
 	public void testValidCarVazio_zeroItem() {
 		int prodCarrinho = homePage.validCarVazio();
 		assertThat(prodCarrinho, is(0));
 	}
-	
+
 	ProdutoPage produtoPage;
 	String nomeProd_PP;
 	String precoProd_PP;
+
 	@Test
 	public void testValidSelecProduto_descEPreco() {
-		/* Navega à homePage;
-		 * Recupera nome e preço do primeiro produto (índice 0) na homePage;
-		 * Clica no primeiro produto;
-		 * Recupera nome e preço na página do produto;
-		 * Realiza comparação entre nomes e preços.
+		/*
+		 * Navega à homePage; Recupera nome e preço do primeiro produto (índice 0) na
+		 * homePage; Clica no primeiro produto; Recupera nome e preço na página do
+		 * produto; Realiza comparação entre nomes e preços.
 		 */
 		int indice = 0;
 		String nomeProd_HP = homePage.obterNomeProd(indice);
 		String precoProd_HP = homePage.obterPrecoProd(indice);
-		produtoPage = homePage.clicarProduto(indice);  //cria instância da classe ProdutoPage
+		produtoPage = homePage.clicarProduto(indice); // cria instância da classe ProdutoPage
 		nomeProd_PP = produtoPage.obterNomeProd();
 		precoProd_PP = produtoPage.obterPrecoProd();
 		assertThat(nomeProd_HP.toUpperCase(), is(nomeProd_PP.toUpperCase()));
@@ -66,20 +69,52 @@ public class HomePageTests extends BaseTests {
 
 	LoginPage loginPage;
 	String cliente = "Raphael Ozorio";
+	String email = "rozorio@teste.com";
+	String password = "testeTeste";
+
 	@Test
 	public void testValidarLogin_logonComSucesso() {
-		/*Clicar em Sign in na HomePage
-		 * Preencher usuário e senha na LoginPage
-		 * Clicar em Sign in na LoginPage
-		 * Verificar usuário logado
+		/*
+		 * Clicar em Sign in na HomePage Preencher usuário e senha na LoginPage Clicar
+		 * em Sign in na LoginPage Verificar usuário logado
 		 */
-		String email = "rozorio@teste.com";
-		String password = "testeTeste";
 		loginPage = homePage.clicarSignIn();
 		loginPage.preencherEmail(email);
 		loginPage.preencherPassword(password);
 		loginPage.clicarSignIn();
 		assertEquals(loginPage.validarLogOn(cliente), true);
+	}
+	
+	/* TESTE PARAMETRIZADO
+	 * - Possibilita uso de .csv como massa de teste
+	 * - @ParameterizedTest --> define como teste parametrizado (anotação JUnit);
+	 * - @CsvFileSource (dir arquivo, linha a pular, delimitador) - Anotação JUnit
+	 * - Parâmetros do teste na mesma ordem que aparecem no arquivo, sempre em formato String
+	 */
+	@ParameterizedTest
+	@CsvFileSource(resources = "/massaTeste_Login.csv", numLinesToSkip = 1, delimiter = ';')
+	public void testLogin_LogadoComSucesso(String tipoTeste, String email, String password, String nomeUsuario, String resultado) {
+		
+		loginPage = homePage.clicarSignIn();
+		loginPage.preencherEmail(email);
+		loginPage.preencherPassword(password);
+		loginPage.clicarSignIn();
+		
+		Boolean loginComSucesso;
+		if(resultado.equals("positivo")) {
+			loginComSucesso = true;
+		} else {
+			loginComSucesso = false;
+		}
+		
+		assertEquals(loginPage.validarLogOn(nomeUsuario), loginComSucesso);
+		
+		//Método implementado na classe BaseTests
+		capturarTela(tipoTeste, resultado);
+		
+		if(loginComSucesso) {
+			homePage.clicarSignOut();
+		}
 	}
 	
 
@@ -88,42 +123,38 @@ public class HomePageTests extends BaseTests {
 	String selCor = "Black";
 	Integer selQtd = 2;
 	String subTotModal;
+
 	@Test
 	public void testIncluirProdCarrinho_carrinhoSucesso() {
-		/* Procedimento:
-		 * - Validar log on;
-		 * - Selecionar produto;
-		 * - Selecionar tamanho, cor e qtde
-		 * - Adicionar ao carrinho
-		 * - Validar carrinho.
+		/*
+		 * Procedimento: - Validar log on; - Selecionar produto; - Selecionar tamanho,
+		 * cor e qtde - Adicionar ao carrinho - Validar carrinho.
 		 */
-		
-		
-		
+
 		LoginPage logPg = homePage.clicarSignIn();
-		
-		//VALIDAR LOG ON
-		if(!logPg.validarLogOn(cliente)) {
+
+		// VALIDAR LOG ON
+		if (!logPg.validarLogOn(cliente)) {
 			testValidarLogin_logonComSucesso();
 		}
-		
-		//SELECIONAR PRODUTO
+
+		// SELECIONAR PRODUTO
 		testValidSelecProduto_descEPreco();
-		
-		//SELECIONAR TAMANHO
+
+		// SELECIONAR TAMANHO
 		produtoPage.selecionarTamanho(selTam);
-		//List<String> tamanhos = produtoPage.obteTamanhoSelecionado();
-		
-		//SELECIONAR COR
+		// List<String> tamanhos = produtoPage.obteTamanhoSelecionado();
+
+		// SELECIONAR COR
 		produtoPage.selecionarCor();
-		
-		//ALTERAR QUANTIDADE
+
+		// ALTERAR QUANTIDADE
 		produtoPage.alterarQuantidade(selQtd);
-		
-		//ADICIONAR AO CARRINHO
+
+		// ADICIONAR AO CARRINHO
 		modalProduto = produtoPage.adicionarCarrinho();
-		
-		//VALIDAÇÕES CARRINHO
+
+		// VALIDAÇÕES CARRINHO
 		assertTrue(modalProduto.validarMsgSucesso().endsWith("Product successfully added to your shopping cart"));
 		assertThat(modalProduto.obterNomeProduto().toUpperCase(), is(nomeProd_PP.toUpperCase()));
 		String precoProdModal = modalProduto.obterPrecoProduto();
@@ -131,33 +162,34 @@ public class HomePageTests extends BaseTests {
 		assertThat(modalProduto.obterTamanho(), is(selTam));
 		assertThat(modalProduto.obterCor(), is(selCor));
 		assertThat(modalProduto.obterQuantidade(), is(selQtd.toString()));
-		
+
 		precoProdModal = precoProdModal.replace("$", "");
 		Double precoProdDouble = Double.parseDouble(precoProdModal);
-		
+
 		subTotModal = modalProduto.obterSubTotal();
 		subTotModal = subTotModal.replace("$", "");
 		Double subTotDouble = Double.parseDouble(subTotModal);
-		
+
 		assertThat(precoProdDouble * selQtd, is(subTotDouble));
 	}
-	
+
 	CheckoutPage checkoutPage;
 	Double subTotTPDbl;
 	Double totTaxITPDbl;
 	Double shipTPDbl;
+
 	@Test
 	public void testValidarCarrinho_infosPersists() {
-		
+
 		Double precoProd;
 		Double subTotProd;
 		Integer qtdeProd;
-		
-		//SELECIONAR PRODUTO E FAZER CHECKOUT
+
+		// SELECIONAR PRODUTO E FAZER CHECKOUT
 		testIncluirProdCarrinho_carrinhoSucesso();
 		CarrinhoPage carrinhoPage = modalProduto.fazerChckOutPedido();
-		
-		//VALIDAR INFOS PROD
+
+		// VALIDAR INFOS PROD
 		assertThat(carrinhoPage.obterNomeProd().toUpperCase(), is(nomeProd_PP.toUpperCase()));
 		assertThat(carrinhoPage.obterPrecoProd(), is(precoProd_PP));
 		precoProd = Funcoes.tratarPrecoToDouble(carrinhoPage.obterPrecoProd());
@@ -166,9 +198,9 @@ public class HomePageTests extends BaseTests {
 		qtdeProd = carrinhoPage.obterQtdeProd();
 		assertThat(qtdeProd, is(selQtd));
 		subTotProd = Funcoes.tratarPrecoToDouble(carrinhoPage.obterSubTotProd());
-		assertThat(subTotProd, is(qtdeProd*precoProd));
-		
-		//VALIDAR INFOS PAINEL TOTAL
+		assertThat(subTotProd, is(qtdeProd * precoProd));
+
+		// VALIDAR INFOS PAINEL TOTAL
 		String qtdeTP = carrinhoPage.obterQtdeTP();
 		qtdeTP = qtdeTP.replace(" items", "");
 		Integer qtdeTPInt = Integer.parseInt(qtdeTP);
@@ -185,31 +217,30 @@ public class HomePageTests extends BaseTests {
 		totTaxITPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterTotTaxITP());
 		assertThat(totTaxITPDbl, is(totTaxETPDbl + taxTPDbl));
 		assertThat(taxTPDbl, is(taxesTP));
-		
+
 		checkoutPage = carrinhoPage.clicarBtnCheckout();
 	}
-	
-	OrderPage orderPage;
+
 	@Test
 	public void testefetuarCheckout_checkoutRealizado() {
-		
+
 		testValidarCarrinho_infosPersists();
-		
-		//VALIDAR VALORES;
+
+		// VALIDAR VALORES;
 		Double subTotChkt = Funcoes.tratarPrecoToDouble(checkoutPage.obterSubTotal());
 		assertThat(subTotChkt, is(subTotTPDbl));
 		Double totalTIChkt = Funcoes.tratarPrecoToDouble(checkoutPage.obterTotalTI());
 		assertThat(totalTIChkt, is(totTaxITPDbl));
 		Double shippVal = Funcoes.tratarPrecoToDouble(checkoutPage.obterShippingValChkt());
 		assertThat(shippVal, is(shipTPDbl));
-		
-		//VALIDAR ENDEREÇO;
+
+		// VALIDAR ENDEREÇO;
 		assertTrue(checkoutPage.obterTituloAddresses().contains("ADDRESSES"));
 		assertTrue(checkoutPage.obterAddrRadioChkd());
 		assertTrue(checkoutPage.obterAddress().startsWith(cliente));
 		checkoutPage.clicarAddressContinue();
-		
-		//VALIDAR FORMA DE ENVIO;
+
+		// VALIDAR FORMA DE ENVIO;
 		assertTrue(checkoutPage.obterTitShipMthd().contains("SHIPPING METHOD"));
 		assertThat(checkoutPage.obterTipoCarrier(), is("My carrier"));
 		assertTrue(checkoutPage.obterTipoCarrChkd());
@@ -218,8 +249,8 @@ public class HomePageTests extends BaseTests {
 		Double valCarDbl = Funcoes.tratarPrecoToDouble(valCarStrg);
 		assertThat(valCarDbl, is(shippVal));
 		checkoutPage.clicarShippingMthdCont();
-		
-		//SELECIONAR FORMA DE PAGAMENTO (CHEQUE);
+
+		// SELECIONAR FORMA DE PAGAMENTO (CHEQUE);
 		assertTrue(checkoutPage.obterTitPayment().contains("PAYMENT"));
 		checkoutPage.clicarPaymentCheck();
 		String valAmount = Funcoes.limparTexto(checkoutPage.obterAmountPayment(), " (tax incl.)");
@@ -227,9 +258,25 @@ public class HomePageTests extends BaseTests {
 		assertThat(valAmountDbl, is(totalTIChkt));
 		checkoutPage.clicarIAgree();
 		assertTrue(checkoutPage.obterIAgreeChkd());
-		
-		//FINALIZAR PEDIDO.
-		orderPage = checkoutPage.clicarBtnOrder();
+	}
+
+	@Test
+	public void testFinalizarPedido_finalizadoComSucesso() {
+
+		// PRÉ-CONDIÇÃO: VALIDAR CHECKOUT
+		testefetuarCheckout_checkoutRealizado();
+
+		// TESTES
+		// EFETUAR O CHECKOUT
+		OrderPage orderPage = checkoutPage.clicarBtnOrder();
+
+		// VALIDAR INFOS ORDER PAGE
+		assertTrue(orderPage.obterTitPedido().toUpperCase().endsWith("YOUR ORDER IS CONFIRMED"));
+		assertThat(orderPage.obterEmail(), is(email));
+		assertThat(orderPage.obterTotProds(), is(subTotTPDbl));
+		assertThat(orderPage.obterTotTxInc(), is(totTaxITPDbl));
+		assertThat(orderPage.obterPymntMethod(), is("check"));
+
 	}
 
 }

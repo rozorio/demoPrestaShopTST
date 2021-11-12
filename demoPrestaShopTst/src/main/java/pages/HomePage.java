@@ -78,12 +78,17 @@ public class HomePage {
 		return new ProdutoPage(driver);
 	}
 	
+	public void clicarSignOut() {
+		driver.findElement(btnSignOut).click();
+	}
+	
 	public LoginPage clicarSignIn() {
 		String txtSigIn = driver.findElement(btnSignIn).getText().intern();
 		if(txtSigIn == "Sign in") {
 			driver.findElement(btnSignIn).click();
 		} else {
-			driver.findElement(btnSignOut).click();
+			clicarSignOut();
+			driver.findElement(btnSignIn).click();
 		}
 		return new LoginPage(driver);
 	}

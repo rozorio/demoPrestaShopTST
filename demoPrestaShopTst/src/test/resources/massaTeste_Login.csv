@@ -1,0 +1,3 @@
+tipoTeste;email;password;nomeUsuario;resultado
+loginValido;rozorio@teste.com;testeTeste;Raphael Ozorio;positivo
+loginInvalido;invalidmail@teste.com;testeTeste;Raphael Ozorio;negativo
