@@ -9,4 +9,9 @@ public class Funcoes {
 		return retorno;
 	}
 	
+	public static String limparTexto (String textoEntrada, String textoARetirar) {
+		String textoTratado = textoEntrada.replace(textoARetirar, "");
+		return textoTratado;
+	}
+	
 }

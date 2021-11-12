@@ -20,6 +20,7 @@ public class CarrinhoPage {
 	private By totTaxETP = new By.ByCssSelector("div.cart-summary-totals div.cart-summary-line:nth-child(1) span.value") ;
 	private By totTaxITP = new By.ByCssSelector("div.cart-summary-totals div.cart-summary-line:nth-child(2) span.value") ;
 	private By taxesTP = new By.ByCssSelector("div.cart-summary-totals div.cart-summary-line:nth-child(3) span.value") ;
+	private By btnCheckout = new By.ByClassName("btn-primary") ;
 	
 	
 	
@@ -77,6 +78,11 @@ public class CarrinhoPage {
 	
 	public String obtertaxesTP() {
 		return driver.findElement(taxesTP).getText();
+	}
+	
+	public CheckoutPage clicarBtnCheckout() {
+		driver.findElement(btnCheckout).click();
+		return new CheckoutPage(driver);
 	}
 	
 }

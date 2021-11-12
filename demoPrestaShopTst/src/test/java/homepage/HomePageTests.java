@@ -11,8 +11,10 @@ import org.junit.jupiter.api.Test;
 
 import base.BaseTests;
 import pages.CarrinhoPage;
+import pages.CheckoutPage;
 import pages.LoginPage;
 import pages.ModalProduto;
+import pages.OrderPage;
 import pages.ProdutoPage;
 import util.Funcoes;
 
@@ -63,6 +65,7 @@ public class HomePageTests extends BaseTests {
 	}
 
 	LoginPage loginPage;
+	String cliente = "Raphael Ozorio";
 	@Test
 	public void testValidarLogin_logonComSucesso() {
 		/*Clicar em Sign in na HomePage
@@ -76,7 +79,7 @@ public class HomePageTests extends BaseTests {
 		loginPage.preencherEmail(email);
 		loginPage.preencherPassword(password);
 		loginPage.clicarSignIn();
-		assertEquals(loginPage.validarLogOn("Raphael Ozorio"), true);
+		assertEquals(loginPage.validarLogOn(cliente), true);
 	}
 	
 
@@ -100,7 +103,7 @@ public class HomePageTests extends BaseTests {
 		LoginPage logPg = homePage.clicarSignIn();
 		
 		//VALIDAR LOG ON
-		if(!logPg.validarLogOn("Raphael Ozorio")) {
+		if(!logPg.validarLogOn(cliente)) {
 			testValidarLogin_logonComSucesso();
 		}
 		
@@ -139,6 +142,10 @@ public class HomePageTests extends BaseTests {
 		assertThat(precoProdDouble * selQtd, is(subTotDouble));
 	}
 	
+	CheckoutPage checkoutPage;
+	Double subTotTPDbl;
+	Double totTaxITPDbl;
+	Double shipTPDbl;
 	@Test
 	public void testValidarCarrinho_infosPersists() {
 		
@@ -165,10 +172,9 @@ public class HomePageTests extends BaseTests {
 		String qtdeTP = carrinhoPage.obterQtdeTP();
 		qtdeTP = qtdeTP.replace(" items", "");
 		Integer qtdeTPInt = Integer.parseInt(qtdeTP);
-		Double subTotTPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterSubTotTP());
+		subTotTPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterSubTotTP());
 		String shipTPStr = "$7.00";
 		Double taxesTP = 0.0;
-		Double shipTPDbl;
 		assertThat(qtdeTPInt, is(qtdeProd));
 		assertThat(subTotTPDbl, is(subTotProd));
 		assertThat(carrinhoPage.obterShipTP(), is(shipTPStr));
@@ -176,10 +182,54 @@ public class HomePageTests extends BaseTests {
 		Double totTaxETPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterTotTaxETP());
 		assertThat(totTaxETPDbl, is(subTotTPDbl + shipTPDbl));
 		Double taxTPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obtertaxesTP());
-		Double totTaxITPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterTotTaxITP());
+		totTaxITPDbl = Funcoes.tratarPrecoToDouble(carrinhoPage.obterTotTaxITP());
 		assertThat(totTaxITPDbl, is(totTaxETPDbl + taxTPDbl));
 		assertThat(taxTPDbl, is(taxesTP));
 		
+		checkoutPage = carrinhoPage.clicarBtnCheckout();
+	}
+	
+	OrderPage orderPage;
+	@Test
+	public void testefetuarCheckout_checkoutRealizado() {
+		
+		testValidarCarrinho_infosPersists();
+		
+		//VALIDAR VALORES;
+		Double subTotChkt = Funcoes.tratarPrecoToDouble(checkoutPage.obterSubTotal());
+		assertThat(subTotChkt, is(subTotTPDbl));
+		Double totalTIChkt = Funcoes.tratarPrecoToDouble(checkoutPage.obterTotalTI());
+		assertThat(totalTIChkt, is(totTaxITPDbl));
+		Double shippVal = Funcoes.tratarPrecoToDouble(checkoutPage.obterShippingValChkt());
+		assertThat(shippVal, is(shipTPDbl));
+		
+		//VALIDAR ENDEREÇO;
+		assertTrue(checkoutPage.obterTituloAddresses().contains("ADDRESSES"));
+		assertTrue(checkoutPage.obterAddrRadioChkd());
+		assertTrue(checkoutPage.obterAddress().startsWith(cliente));
+		checkoutPage.clicarAddressContinue();
+		
+		//VALIDAR FORMA DE ENVIO;
+		assertTrue(checkoutPage.obterTitShipMthd().contains("SHIPPING METHOD"));
+		assertThat(checkoutPage.obterTipoCarrier(), is("My carrier"));
+		assertTrue(checkoutPage.obterTipoCarrChkd());
+		String valCarStrg = checkoutPage.obterPrecoCarrier();
+		valCarStrg = Funcoes.limparTexto(valCarStrg, " tax excl.");
+		Double valCarDbl = Funcoes.tratarPrecoToDouble(valCarStrg);
+		assertThat(valCarDbl, is(shippVal));
+		checkoutPage.clicarShippingMthdCont();
+		
+		//SELECIONAR FORMA DE PAGAMENTO (CHEQUE);
+		assertTrue(checkoutPage.obterTitPayment().contains("PAYMENT"));
+		checkoutPage.clicarPaymentCheck();
+		String valAmount = Funcoes.limparTexto(checkoutPage.obterAmountPayment(), " (tax incl.)");
+		Double valAmountDbl = Funcoes.tratarPrecoToDouble(valAmount);
+		assertThat(valAmountDbl, is(totalTIChkt));
+		checkoutPage.clicarIAgree();
+		assertTrue(checkoutPage.obterIAgreeChkd());
+		
+		//FINALIZAR PEDIDO.
+		orderPage = checkoutPage.clicarBtnOrder();
 	}
 
 }
