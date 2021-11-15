@@ -11,20 +11,20 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 /*
- * HomePage: classe que reúne métodos de interação com a página própriamente dita
+ * HomePage: classe que reï¿½ne mï¿½todos de interaï¿½ï¿½o com a pï¿½gina prï¿½priamente dita
  */
 
 public class HomePage {
 
 	/*
-	 * private WebDriver (...): Cria variável driver que será parametrizada pela classe BaseTest;
-	 * List<WebElement> (...): Cria vetor que irá registrar elementos encontrados na tela
-	 * private By (...): Cria obj do tipo By para parametrizar o método findElements
+	 * private WebDriver (...): Cria variï¿½vel driver que serï¿½ parametrizada pela classe BaseTest;
+	 * List<WebElement> (...): Cria vetor que irï¿½ registrar elementos encontrados na tela
+	 * private By (...): Cria obj do tipo By para parametrizar o mï¿½todo findElements
 	 * 
 	 */
 	
 	private WebDriver driver;
-	List<WebElement> listaProds = new ArrayList<WebElement>();     //List: biblioteca que não faz parte do java padrão (como Integer, Double...), integra a java.util
+	List<WebElement> listaProds = new ArrayList<WebElement>();     //List: biblioteca que nï¿½o faz parte do java padrï¿½o (como Integer, Double...), integra a java.util
 	private By produtos = new By.ByClassName("product-description");
 	private By carrinho = new By.ByClassName("cart-products-count");
 	private By descProd = new By.ByCssSelector(".product-description a");
@@ -35,9 +35,9 @@ public class HomePage {
 	
 	/*
 	 * 
-	 * public HomePage()...: Método da classe que constrói objeto homePage com o driver parametrizado pela BaseTest
-	 * public int contProds()...: Método que irá retornar a quantidade de produtos encontrados na página
-	 * private void carregarListProds()...: Método que irá preencher Array com produtos encontrados na página
+	 * public HomePage()...: Mï¿½todo da classe que constrï¿½i objeto homePage com o driver parametrizado pela BaseTest
+	 * public int contProds()...: Mï¿½todo que irï¿½ retornar a quantidade de produtos encontrados na pï¿½gina
+	 * private void carregarListProds()...: Mï¿½todo que irï¿½ preencher Array com produtos encontrados na pï¿½gina
 	 * 
 	 */
 	
@@ -45,7 +45,20 @@ public class HomePage {
 		this.driver = driver;
 	}
 	
-	public int contProds() {
+	public void abrirPaginaInicio(String endereco) {
+		driver.get(endereco);
+	}
+	
+	public String verificarTituloPagina() {
+		return driver.getTitle();
+	}
+	
+	public boolean verificarUsuarioNaoLogado() {
+		String signIn = driver.findElement(btnSignIn).getText().intern();
+		return signIn.equals("Sign in");
+	}
+	
+	public int contarProdsExibidos() {
 		carregarListProds();
 		return listaProds.size();
 	}

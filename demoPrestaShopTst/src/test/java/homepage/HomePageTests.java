@@ -21,23 +21,23 @@ import pages.ProdutoPage;
 import util.Funcoes;
 
 /* 
- * Classe HomePageTests: reúne os testes realizados na home page
+ * Classe HomePageTests: reï¿½ne os testes realizados na home page
  */
 
 public class HomePageTests extends BaseTests {
 
 	/*
 	 * 
-	 * public void testContProds...: Método que irá carregar pág inicial e validar
-	 * correta exibição da lista de produtos ** carregarPagInic(): Método da classe
-	 * BaseTests ** assertThat...: comparação do Hamcrest, compara se valor
-	 * retornado pelo homepage.contProds() é 8
+	 * public void testContProds...: Mï¿½todo que irï¿½ carregar pï¿½g inicial e validar
+	 * correta exibiï¿½ï¿½o da lista de produtos ** carregarPagInic(): Mï¿½todo da classe
+	 * BaseTests ** assertThat...: comparaï¿½ï¿½o do Hamcrest, compara se valor
+	 * retornado pelo homepage.contProds() ï¿½ 8
 	 */
 
-	@Test // anotação JUnit, indica que são métodos de teste.
+	@Test // anotaï¿½ï¿½o JUnit, indica que sï¿½o mï¿½todos de teste.
 	public void testContProds_oitoProds() {
 		carregarPagInic();
-		assertThat(homePage.contProds(), is(8));
+		assertThat(homePage.contarProdsExibidos(), is(8));
 	}
 
 	@Test
@@ -53,14 +53,14 @@ public class HomePageTests extends BaseTests {
 	@Test
 	public void testValidSelecProduto_descEPreco() {
 		/*
-		 * Navega à homePage; Recupera nome e preço do primeiro produto (índice 0) na
-		 * homePage; Clica no primeiro produto; Recupera nome e preço na página do
-		 * produto; Realiza comparação entre nomes e preços.
+		 * Navega ï¿½ homePage; Recupera nome e preï¿½o do primeiro produto (ï¿½ndice 0) na
+		 * homePage; Clica no primeiro produto; Recupera nome e preï¿½o na pï¿½gina do
+		 * produto; Realiza comparaï¿½ï¿½o entre nomes e preï¿½os.
 		 */
 		int indice = 0;
 		String nomeProd_HP = homePage.obterNomeProd(indice);
 		String precoProd_HP = homePage.obterPrecoProd(indice);
-		produtoPage = homePage.clicarProduto(indice); // cria instância da classe ProdutoPage
+		produtoPage = homePage.clicarProduto(indice); // cria instï¿½ncia da classe ProdutoPage
 		nomeProd_PP = produtoPage.obterNomeProd();
 		precoProd_PP = produtoPage.obterPrecoProd();
 		assertThat(nomeProd_HP.toUpperCase(), is(nomeProd_PP.toUpperCase()));
@@ -75,8 +75,8 @@ public class HomePageTests extends BaseTests {
 	@Test
 	public void testValidarLogin_logonComSucesso() {
 		/*
-		 * Clicar em Sign in na HomePage Preencher usuário e senha na LoginPage Clicar
-		 * em Sign in na LoginPage Verificar usuário logado
+		 * Clicar em Sign in na HomePage Preencher usuï¿½rio e senha na LoginPage Clicar
+		 * em Sign in na LoginPage Verificar usuï¿½rio logado
 		 */
 		loginPage = homePage.clicarSignIn();
 		loginPage.preencherEmail(email);
@@ -87,9 +87,9 @@ public class HomePageTests extends BaseTests {
 	
 	/* TESTE PARAMETRIZADO
 	 * - Possibilita uso de .csv como massa de teste
-	 * - @ParameterizedTest --> define como teste parametrizado (anotação JUnit);
-	 * - @CsvFileSource (dir arquivo, linha a pular, delimitador) - Anotação JUnit
-	 * - Parâmetros do teste na mesma ordem que aparecem no arquivo, sempre em formato String
+	 * - @ParameterizedTest --> define como teste parametrizado (anotaï¿½ï¿½o JUnit);
+	 * - @CsvFileSource (dir arquivo, linha a pular, delimitador) - Anotaï¿½ï¿½o JUnit
+	 * - Parï¿½metros do teste na mesma ordem que aparecem no arquivo, sempre em formato String
 	 */
 	@ParameterizedTest
 	@CsvFileSource(resources = "/massaTeste_Login.csv", numLinesToSkip = 1, delimiter = ';')
@@ -109,7 +109,7 @@ public class HomePageTests extends BaseTests {
 		
 		assertEquals(loginPage.validarLogOn(nomeUsuario), loginComSucesso);
 		
-		//Método implementado na classe BaseTests
+		//Mï¿½todo implementado na classe BaseTests
 		capturarTela(tipoTeste, resultado);
 		
 		if(loginComSucesso) {
@@ -154,7 +154,7 @@ public class HomePageTests extends BaseTests {
 		// ADICIONAR AO CARRINHO
 		modalProduto = produtoPage.adicionarCarrinho();
 
-		// VALIDAÇÕES CARRINHO
+		// VALIDAï¿½ï¿½ES CARRINHO
 		assertTrue(modalProduto.validarMsgSucesso().endsWith("Product successfully added to your shopping cart"));
 		assertThat(modalProduto.obterNomeProduto().toUpperCase(), is(nomeProd_PP.toUpperCase()));
 		String precoProdModal = modalProduto.obterPrecoProduto();
@@ -234,7 +234,7 @@ public class HomePageTests extends BaseTests {
 		Double shippVal = Funcoes.tratarPrecoToDouble(checkoutPage.obterShippingValChkt());
 		assertThat(shippVal, is(shipTPDbl));
 
-		// VALIDAR ENDEREÇO;
+		// VALIDAR ENDEREï¿½O;
 		assertTrue(checkoutPage.obterTituloAddresses().contains("ADDRESSES"));
 		assertTrue(checkoutPage.obterAddrRadioChkd());
 		assertTrue(checkoutPage.obterAddress().startsWith(cliente));
@@ -263,7 +263,7 @@ public class HomePageTests extends BaseTests {
 	@Test
 	public void testFinalizarPedido_finalizadoComSucesso() {
 
-		// PRÉ-CONDIÇÃO: VALIDAR CHECKOUT
+		// PRï¿½-CONDIï¿½ï¿½O: VALIDAR CHECKOUT
 		testefetuarCheckout_checkoutRealizado();
 
 		// TESTES
