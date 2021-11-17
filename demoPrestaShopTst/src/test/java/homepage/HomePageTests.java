@@ -15,7 +15,7 @@ import base.BaseTests;
 import pages.CarrinhoPage;
 import pages.CheckoutPage;
 import pages.LoginPage;
-import pages.ModalProduto;
+import pages.ModalPage;
 import pages.OrderPage;
 import pages.ProdutoPage;
 import util.Funcoes;
@@ -118,7 +118,7 @@ public class HomePageTests extends BaseTests {
 	}
 	
 
-	ModalProduto modalProduto;
+	ModalPage modalProduto;
 	String selTam = "M";
 	String selCor = "Black";
 	Integer selQtd = 2;
@@ -146,7 +146,7 @@ public class HomePageTests extends BaseTests {
 		// List<String> tamanhos = produtoPage.obteTamanhoSelecionado();
 
 		// SELECIONAR COR
-		produtoPage.selecionarCor();
+		produtoPage.selecionarCor("Black");
 
 		// ALTERAR QUANTIDADE
 		produtoPage.alterarQuantidade(selQtd);

@@ -10,7 +10,7 @@ public class LoginPage {
 	private By emailLog = new By.ByName("email");
 	private By passwLog = new By.ByName("password");
 	private By btnSigIn = new By.ById("submit-login");
-//	private By logoHome = new By.ByCssSelector("#_desktop_logo a");
+	private By logoHome = new By.ByCssSelector("#_desktop_logo a");
 	private By usuarioLogado = new By.ByCssSelector("#_desktop_user_info span");
 	
 	public LoginPage(WebDriver driver) {
@@ -27,7 +27,7 @@ public class LoginPage {
 	
 	public void clicarSignIn() {
 		driver.findElement(btnSigIn).click();
-//		driver.findElement(logoHome).click();
+		driver.findElement(logoHome).click();
 	}
 	
 	public Boolean validarLogOn(String usuario) {

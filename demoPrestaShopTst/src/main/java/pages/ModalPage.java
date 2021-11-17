@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 
-public class ModalProduto {
+public class ModalPage {
 
 	private WebDriver driver;
 	private By titModal = new By.ById("myModalLabel");
@@ -19,8 +19,9 @@ public class ModalProduto {
 	private By outrasInfos = new By.ByCssSelector("#blockcart-modal .modal-body .col-md-6:nth-child(2) strong");
 	private By subTotal = new By.ByCssSelector(".cart-content p:nth-child(2) span.value");
 	private By btnChckOut = new By.ByCssSelector(".cart-content-btn a");
+	int i;
 	
-	public ModalProduto(WebDriver driver) {
+	public ModalPage(WebDriver driver) {
 		this.driver = driver;
 	}
 	
@@ -54,11 +55,16 @@ public class ModalProduto {
 	}
 	
 	public String obterCor(){
-		return driver.findElements(outrasInfos).get(1).getText();	
+			return driver.findElements(outrasInfos).get(1).getText();
 	}
 	
 	public String obterQuantidade(){
-		return driver.findElements(outrasInfos).get(2).getText();	
+		i = driver.findElements(outrasInfos).size();
+		if(i == 3) {
+			return driver.findElements(outrasInfos).get(2).getText();
+		} else {
+			return driver.findElements(outrasInfos).get(1).getText();
+		}
 	}
 	
 	public String obterSubTotal() {

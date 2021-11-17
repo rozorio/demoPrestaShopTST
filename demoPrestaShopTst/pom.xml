@@ -9,7 +9,7 @@
 		<junit.version>5.7.0</junit.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<selenium.version>3.141.59</selenium.version>
-		<cucumber.version>6.9.1</cucumber.version>
+		<cucumber.version>6.1.2</cucumber.version>
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->

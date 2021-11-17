@@ -14,15 +14,15 @@ public class ProdutoPage {
 
 	private WebDriver driver;
 	private By descProd = new By.ByClassName("h1");
-	private By valProd = new By.ByCssSelector(".current-price span:nth-child(1)"); //nth-child(1) --> garantir que será retornado o 1º span
+	private By valProd = new By.ByCssSelector(".current-price span:nth-child(1)"); //nth-child(1) --> garantir que serï¿½ retornado o 1ï¿½ span
 	private By tamProd = new By.ById("group_1");
 	private By corPreta = new By.ByXPath("//ul[@id='group_2']//input[@value='11']"); //  //elemento[@atributo]
 	private By inputQtde = new By.ById("quantity_wanted");
 	private By addToCar = new By.ByCssSelector(".add-to-cart");
 	
 	public ProdutoPage(WebDriver driver) {
-		/* Construtor de instância de ProdutoPage
-		 * Receberá o driver de quem o invoca para continuar os testes
+		/* Construtor de instï¿½ncia de ProdutoPage
+		 * Receberï¿½ o driver de quem o invoca para continuar os testes
 		 */
 		this.driver = driver;
 	}
@@ -48,7 +48,7 @@ public class ProdutoPage {
 		/*Enhanced-for
 		 * (tipo_do_array:array)
 		 * obrigado percorrer array
-		 * a cada iteração será armazenado o elemento do array
+		 * a cada iteraï¿½ï¿½o serï¿½ armazenado o elemento do array
 		 */
 		for(WebElement elemento : opcoesTam) {
 			listaTamanhos.add(elemento.getText());
@@ -61,8 +61,10 @@ public class ProdutoPage {
 		instanciarSelectTam().selectByVisibleText(opcao);
 	}
 	
-	public void selecionarCor() {
-		driver.findElement(corPreta).click();
+	public void selecionarCor(String opcao) {
+		if(opcao.intern() != "N/A") {
+			driver.findElement(corPreta).click();
+		} 		
 	}
 	
 	public void alterarQuantidade(int qtde) {
@@ -70,8 +72,8 @@ public class ProdutoPage {
 		driver.findElement(inputQtde).sendKeys(Integer.toString(qtde));
 	}
 	
-	public ModalProduto adicionarCarrinho() {
+	public ModalPage adicionarCarrinho() {
 		driver.findElement(addToCar).click();
-		return new ModalProduto(driver);
+		return new ModalPage(driver);
 	}
 }

@@ -14,4 +14,6 @@ public class Funcoes {
 		return textoTratado;
 	}
 	
+	
+	
 }
